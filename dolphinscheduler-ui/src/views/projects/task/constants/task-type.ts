@@ -53,6 +53,7 @@ export type TaskType =
   | 'DATA_FACTORY'
   | 'REMOTESHELL'
   | 'ALIYUN_SERVERLESS_SPARK'
+  | 'DATAVINES'
 
 export type TaskExecuteType = 'STREAM' | 'BATCH'
 
@@ -106,6 +107,10 @@ export const TASK_TYPES_MAP = {
   },
   DATA_QUALITY: {
     alias: 'DATA_QUALITY',
+    helperLinkDisable: true
+  },
+  DATAVINES: {
+    alias: 'DATAVINES',
     helperLinkDisable: true
   },
   SWITCH: {

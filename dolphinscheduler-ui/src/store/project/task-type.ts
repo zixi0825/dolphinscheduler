@@ -74,6 +74,10 @@ export const TASK_TYPES_MAP = {
     alias: 'DATA_QUALITY',
     helperLinkDisable: true
   },
+  DATAVINES: {
+    alias: 'DATAVINES',
+    helperLinkDisable: true
+  },
   SWITCH: {
     alias: 'SWITCH'
   },

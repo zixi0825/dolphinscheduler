@@ -59,6 +59,7 @@ type TaskType =
   | 'DATA_FACTORY'
   | 'REMOTESHELL'
   | 'ALIYUN_SERVERLESS_SPARK'
+  | 'DATAVINES'
 
 type ProgramType = 'JAVA' | 'SCALA' | 'PYTHON'
 
