@@ -29,7 +29,6 @@ export type TaskType =
   | 'DATAX'
   | 'SQOOP'
   | 'CONDITIONS'
-  | 'DATA_QUALITY'
   | 'SWITCH'
   | 'SEATUNNEL'
   | 'EMR'
@@ -104,10 +103,6 @@ export const TASK_TYPES_MAP = {
   },
   CONDITIONS: {
     alias: 'CONDITIONS'
-  },
-  DATA_QUALITY: {
-    alias: 'DATA_QUALITY',
-    helperLinkDisable: true
   },
   DATAVINES: {
     alias: 'DATAVINES',

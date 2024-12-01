@@ -27,6 +27,7 @@ import org.apache.dolphinscheduler.api.utils.Result;
 import org.apache.dolphinscheduler.common.constants.Constants;
 import org.apache.dolphinscheduler.common.enums.AuthorizationType;
 import org.apache.dolphinscheduler.common.enums.UserType;
+import org.apache.dolphinscheduler.common.enums.WorkflowExecutionStatus;
 import org.apache.dolphinscheduler.common.utils.JSONUtils;
 import org.apache.dolphinscheduler.dao.entity.EnvironmentWorkerGroupRelation;
 import org.apache.dolphinscheduler.dao.entity.Schedule;
@@ -66,7 +67,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.facebook.presto.jdbc.internal.guava.base.Strings;
+import com.google.common.base.Strings;
 
 @Service
 @Slf4j
@@ -391,9 +392,9 @@ public class WorkerGroupServiceImpl extends BaseServiceImpl implements WorkerGro
             putMsg(result, Status.DELETE_WORKER_GROUP_NOT_EXIST);
             return result;
         }
-        List<WorkflowInstance> workflowInstances = workflowInstanceMapper
-                .queryByWorkerGroupNameAndStatus(workerGroup.getName(),
-                        org.apache.dolphinscheduler.service.utils.Constants.NOT_TERMINATED_STATES);
+        List<WorkflowInstance> workflowInstances = workflowInstanceMapper.queryByWorkerGroupNameAndStatus(
+                workerGroup.getName(),
+                WorkflowExecutionStatus.getNotTerminalStatus());
         if (CollectionUtils.isNotEmpty(workflowInstances)) {
             List<Integer> workflowInstanceIds =
                     workflowInstances.stream().map(WorkflowInstance::getId).collect(Collectors.toList());

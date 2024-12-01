@@ -47,7 +47,6 @@ task:
     - 'DATAX'
     - 'SQOOP'
   dataQuality:
-    - 'DATA_QUALITY'
     - 'DATAVINES'
   machineLearning:
     - 'JUPYTER'
