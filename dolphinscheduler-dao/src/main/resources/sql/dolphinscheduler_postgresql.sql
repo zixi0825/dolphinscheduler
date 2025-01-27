@@ -350,6 +350,7 @@ CREATE TABLE t_ds_workflow_definition (
 ) ;
 
 create index workflow_definition_index on t_ds_workflow_definition (code,id);
+create index workflow_definition_index_project_code on t_ds_workflow_definition (project_code);
 
 --
 -- Table structure for table t_ds_workflow_definition_log
@@ -379,6 +380,7 @@ CREATE TABLE t_ds_workflow_definition_log (
 ) ;
 
 create UNIQUE index uniq_idx_code_version on t_ds_workflow_definition_log (code,version);
+create index workflow_definition_log_index_project_code on t_ds_workflow_definition_log (project_code);
 
 --
 -- Table structure for table t_ds_task_definition
@@ -397,7 +399,6 @@ CREATE TABLE t_ds_task_definition (
   task_execute_type int DEFAULT '0',
   task_params text ,
   flag int DEFAULT NULL ,
-  is_cache int DEFAULT '0',
   task_priority int DEFAULT '2' ,
   worker_group varchar(255) DEFAULT NULL ,
   environment_code bigint DEFAULT '-1',
@@ -436,7 +437,6 @@ CREATE TABLE t_ds_task_definition_log (
   task_execute_type int DEFAULT '0',
   task_params text ,
   flag int DEFAULT NULL ,
-  is_cache int DEFAULT '0' ,
   task_priority int DEFAULT '2' ,
   worker_group varchar(255) DEFAULT NULL ,
   environment_code bigint DEFAULT '-1',
@@ -814,8 +814,6 @@ CREATE TABLE t_ds_task_instance (
   app_link text ,
   task_params text ,
   flag int DEFAULT '1' ,
-  is_cache int DEFAULT '0',
-  cache_key varchar(200) DEFAULT NULL,
   retry_interval int DEFAULT NULL ,
   max_retry_times int DEFAULT NULL ,
   task_instance_priority int DEFAULT NULL ,
@@ -836,7 +834,22 @@ CREATE TABLE t_ds_task_instance (
 ) ;
 
 create index idx_task_instance_code_version on t_ds_task_instance (task_code, task_definition_version);
-create index idx_cache_key on t_ds_task_instance (cache_key);
+
+--
+-- Table structure for t_ds_task_instance_context
+--
+DROP TABLE IF EXISTS t_ds_task_instance_context;
+CREATE TABLE t_ds_task_instance_context (
+  id int NOT NULL,
+  task_instance_id int NOT NULL,
+  context text NOT NULL,
+  context_type varchar(200) NOT NULL,
+  create_time timestamp NOT NULL,
+  update_time timestamp NOT NULL,
+  PRIMARY KEY (id)
+);
+
+create unique index idx_task_instance_id on t_ds_task_instance_context (task_instance_id, context_type);
 
 --
 -- Table structure for table t_ds_tenant
@@ -923,8 +936,7 @@ CREATE TABLE t_ds_worker_group (
   addr_list text DEFAULT NULL ,
   create_time timestamp DEFAULT NULL ,
   update_time timestamp DEFAULT NULL ,
-  description text  DEFAULT NULL,
-  other_params_json text  DEFAULT NULL,
+  description text DEFAULT NULL,
   PRIMARY KEY (id) ,
   CONSTRAINT name_unique UNIQUE (name)
 ) ;

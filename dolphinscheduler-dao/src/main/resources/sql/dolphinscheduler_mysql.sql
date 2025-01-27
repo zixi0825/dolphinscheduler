@@ -427,7 +427,8 @@ CREATE TABLE `t_ds_workflow_definition` (
   `create_time` datetime NOT NULL COMMENT 'create time',
   `update_time` datetime NOT NULL COMMENT 'update time',
   PRIMARY KEY (`id`,`code`),
-  UNIQUE KEY `workflow_unique` (`name`,`project_code`) USING BTREE
+  UNIQUE KEY `workflow_unique` (`name`,`project_code`) USING BTREE,
+  KEY `idx_project_code` (`project_code`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE = utf8_bin;
 
 -- ----------------------------
@@ -454,7 +455,8 @@ CREATE TABLE `t_ds_workflow_definition_log` (
   `create_time` datetime NOT NULL COMMENT 'create time',
   `update_time` datetime NOT NULL COMMENT 'update time',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uniq_idx_code_version` (`code`,`version`) USING BTREE
+  UNIQUE KEY `uniq_idx_code_version` (`code`,`version`) USING BTREE,
+  KEY `idx_project_code` (`project_code`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE = utf8_bin;
 
 -- ----------------------------
@@ -473,7 +475,6 @@ CREATE TABLE `t_ds_task_definition` (
   `task_execute_type` int(11) DEFAULT '0' COMMENT 'task execute type: 0-batch, 1-stream',
   `task_params` longtext COMMENT 'job custom parameters',
   `flag` tinyint(2) DEFAULT NULL COMMENT '0 not available, 1 available',
-  `is_cache` tinyint(2) DEFAULT '0' COMMENT '0 not available, 1 available',
   `task_priority` tinyint(4) DEFAULT '2' COMMENT 'job priority',
   `worker_group` varchar(255) DEFAULT NULL COMMENT 'worker grouping',
   `environment_code` bigint(20) DEFAULT '-1' COMMENT 'environment code',
@@ -490,7 +491,8 @@ CREATE TABLE `t_ds_task_definition` (
   `memory_max` int(11) DEFAULT '-1' NOT NULL COMMENT 'MemoryMax(MB): -1:Infinity',
   `create_time` datetime NOT NULL COMMENT 'create time',
   `update_time` datetime NOT NULL COMMENT 'update time',
-  PRIMARY KEY (`id`,`code`)
+  PRIMARY KEY (`id`,`code`),
+  KEY `idx_project_code` (`project_code`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE = utf8_bin;
 
 -- ----------------------------
@@ -509,7 +511,6 @@ CREATE TABLE `t_ds_task_definition_log` (
   `task_execute_type` int(11) DEFAULT '0' COMMENT 'task execute type: 0-batch, 1-stream',
   `task_params` longtext COMMENT 'job custom parameters',
   `flag` tinyint(2) DEFAULT NULL COMMENT '0 not available, 1 available',
-  `is_cache` tinyint(2) DEFAULT '0' COMMENT '0 not available, 1 available',
   `task_priority` tinyint(4) DEFAULT '2' COMMENT 'job priority',
   `worker_group` varchar(255) DEFAULT NULL COMMENT 'worker grouping',
   `environment_code` bigint(20) DEFAULT '-1' COMMENT 'environment code',
@@ -899,8 +900,6 @@ CREATE TABLE `t_ds_task_instance` (
   `app_link` text COMMENT 'yarn app id',
   `task_params` longtext COMMENT 'job custom parameters',
   `flag` tinyint(4) DEFAULT '1' COMMENT '0 not available, 1 available',
-  `is_cache` tinyint(2) DEFAULT '0' COMMENT '0 not available, 1 available',
-  `cache_key` varchar(200) DEFAULT NULL COMMENT 'cache_key',
   `retry_interval` int(4) DEFAULT NULL COMMENT 'retry interval when task failed ',
   `max_retry_times` int(2) DEFAULT NULL COMMENT 'max retry times',
   `task_instance_priority` int(11) DEFAULT NULL COMMENT 'task instance priority:0 Highest,1 High,2 Medium,3 Low,4 Lowest',
@@ -919,13 +918,27 @@ CREATE TABLE `t_ds_task_instance` (
   `test_flag`  tinyint(4) DEFAULT null COMMENT 'test flag：0 normal, 1 test run',
   PRIMARY KEY (`id`),
   KEY `workflow_instance_id` (`workflow_instance_id`) USING BTREE,
-  KEY `idx_code_version` (`task_code`, `task_definition_version`) USING BTREE,
-  KEY `idx_cache_key` (`cache_key`) USING BTREE
+  KEY `idx_code_version` (`task_code`, `task_definition_version`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE = utf8_bin;
 
 -- ----------------------------
 -- Records of t_ds_task_instance
 -- ----------------------------
+
+-- ----------------------------
+-- Table structure for t_ds_task_instance_context
+-- ----------------------------
+DROP TABLE IF EXISTS `t_ds_task_instance_context`;
+CREATE TABLE `t_ds_task_instance_context` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `task_instance_id` int(11) NOT NULL,
+    `context` text NOT NULL,
+    `context_type` varchar(200) NOT NULL COMMENT 'context type',
+    `create_time` datetime NOT NULL,
+    `update_time` datetime NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `task_instance_id` (`task_instance_id`,`context_type`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE = utf8_bin;
 
 -- ----------------------------
 -- Table structure for t_ds_tenant
@@ -1010,7 +1023,6 @@ CREATE TABLE `t_ds_worker_group` (
   `create_time` datetime NULL DEFAULT NULL COMMENT 'create time',
   `update_time` datetime NULL DEFAULT NULL COMMENT 'update time',
   `description` text NULL DEFAULT NULL COMMENT 'description',
-  `other_params_json` text NULL DEFAULT NULL COMMENT 'other params json',
   PRIMARY KEY (`id`),
   UNIQUE KEY `name_unique` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE = utf8_bin;

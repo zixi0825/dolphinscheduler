@@ -471,7 +471,6 @@ CREATE TABLE t_ds_task_definition
     task_execute_type       int(11) DEFAULT '0',
     task_params             longtext,
     flag                    tinyint(2) DEFAULT NULL,
-    is_cache                tinyint(2) DEFAULT '0',
     task_priority           tinyint(4) DEFAULT '2',
     worker_group            varchar(200) DEFAULT NULL,
     environment_code        bigint(20) DEFAULT '-1',
@@ -508,7 +507,6 @@ CREATE TABLE t_ds_task_definition_log
     task_execute_type       int(11) DEFAULT '0',
     task_params             text,
     flag                    tinyint(2) DEFAULT NULL,
-    is_cache                tinyint(2) DEFAULT '0',
     task_priority           tinyint(4) DEFAULT '2',
     worker_group            varchar(200) DEFAULT NULL,
     environment_code        bigint(20) DEFAULT '-1',
@@ -904,8 +902,6 @@ CREATE TABLE t_ds_task_instance
     app_link                text,
     task_params             longtext,
     flag                    tinyint(4) DEFAULT '1',
-    is_cache                tinyint(2) DEFAULT '0',
-    cache_key               varchar(200) DEFAULT NULL,
     retry_interval          int(4) DEFAULT NULL,
     max_retry_times         int(2) DEFAULT NULL,
     task_instance_priority  int(11) DEFAULT NULL,
@@ -928,6 +924,20 @@ CREATE TABLE t_ds_task_instance
 -- ----------------------------
 -- Records of t_ds_task_instance
 -- ----------------------------
+
+-- ----------------------------
+-- Table structure for t_ds_task_instance_context
+-- ----------------------------
+DROP TABLE IF EXISTS `t_ds_task_instance_context`;
+CREATE TABLE `t_ds_task_instance_context` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `task_instance_id` int(11) NOT NULL,
+    `context` text NOT NULL,
+    `context_type` varchar(200) NOT NULL,
+    `create_time` datetime NOT NULL,
+    `update_time` datetime NOT NULL,
+    PRIMARY KEY (`id`)
+);
 
 -- ----------------------------
 -- Table structure for t_ds_tenant
@@ -1015,7 +1025,6 @@ CREATE TABLE t_ds_worker_group
     create_time datetime NULL DEFAULT NULL,
     update_time datetime NULL DEFAULT NULL,
     description text NULL DEFAULT NULL,
-    other_params_json text NULL DEFAULT NULL,
     PRIMARY KEY (id),
     UNIQUE KEY name_unique (name)
 );

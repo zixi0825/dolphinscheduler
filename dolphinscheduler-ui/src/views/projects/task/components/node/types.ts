@@ -496,7 +496,6 @@ interface INodeData
   cpuQuota?: number
   memoryMax?: number
   flag?: 'YES' | 'NO'
-  isCache?: boolean
   taskGroupId?: number
   taskGroupPriority?: number
   taskPriority?: string
@@ -527,11 +526,10 @@ interface INodeData
 interface ITaskData
   extends Omit<
     INodeData,
-    'isCache' | 'timeoutFlag' | 'taskPriority' | 'timeoutNotifyStrategy'
+    'timeoutFlag' | 'taskPriority' | 'timeoutNotifyStrategy'
   > {
   name?: string
   taskPriority?: string
-  isCache?: 'YES' | 'NO'
   timeoutFlag?: 'OPEN' | 'CLOSE'
   timeoutNotifyStrategy?: string | []
   taskParams?: ITaskParams
